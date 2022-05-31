@@ -1,10 +1,11 @@
 # Tractography_Pipeline_for_Lesion_Patients
-Probablistic Tractography (i.e., mrtrix single shell CSD and multishell CSD with Anatomical Constraint) Pipeline for Patients with focal Brain Lesion (e.g., Ischemic Stroke, )
+Probablistic Tractography (i.e., mrtrix single shell CSD and multishell CSD with Anatomical Constraint) Pipeline for Patients with focal Brain Lesion (e.g., Ischemic Stroke )
 
 
 ## Step 1. Lesion Mask Generation 
 Generating **_brain lesion mask_** in a fully-automated way.  
 By using pre-trained deep learning model (i.e., **_TransUNet_**), generating a **_brain lesion mask_** image from **_T1w image_**. 
+Dataset used for pretraining is ATLAS(Anatomical Tracings of Lesions After Stroke) (https://www.nature.com/articles/sdata201811#MOESM218)
 
 ## Step 2. Prerpocessing T1w and DWI images with brain lesion mask 
 Running QSIprep preprocessing process. 
