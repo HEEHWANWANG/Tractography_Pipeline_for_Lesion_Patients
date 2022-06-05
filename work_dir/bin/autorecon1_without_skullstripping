@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 import os
+import shutil
 from tkinter.tix import InputOnly
 
 import nipype.pipeline.engine as pe
@@ -581,14 +582,14 @@ if not os.path.isdir(tutorial_dir):
 
 
 # ================
-wf = pe.Workflow(name="l1workflow")
+wf = pe.Workflow(name="autorecon1_without_skullstripping")
 wf.base_dir = os.path.join(tutorial_dir, 'workdir')
 
 
 # ================
 subject_list = ['sub-41']
 data_dir = os.path.abspath('lesion_tract_pipeline/BIDS')
-subjects_dir = os.path.join(tutorial_dir, 'subjects_dir')
+subjects_dir = os.path.join(tutorial_dir, 'step1_output')
 if not os.path.exists(subjects_dir):
     os.mkdir(subjects_dir)
 
@@ -623,3 +624,4 @@ wf.connect(datasource, 'struct', autorecon1, 'inputspec.T1_files')
 
 #wf.run("MultiProc", plugin_args={'n_procs': 1})
 wf.run()
+shutil.rmtree(wf.base_dir)
