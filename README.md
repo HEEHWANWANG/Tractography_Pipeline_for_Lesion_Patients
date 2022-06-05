@@ -4,7 +4,8 @@ Probablistic Tractography (i.e., mrtrix single shell CSD and multishell CSD with
 ## Pipeline docker arcitecture
 - **controlling all of pipeline process with a python script with shebang line**  
 (reference template: https://github.com/MIC-DKFZ/TractSeg  
-what is shebang line: https://wikidocs.net/16051)
+what is shebang line: https://wikidocs.net/16051)  
+- Thus, each step can be perform with different binary files while the whole process also can be perform with a single binary files
 - docker image: pull freesurfer docker image => pip install qsiprep => pip install this repo => pip install the VBG => aliasing this repo and the VBG => commit docker image. Upload this image to docker repo.  
 - Dockerfile: Pull uploaded docker image. Freesurfer license key should be setting in this script. 
 
