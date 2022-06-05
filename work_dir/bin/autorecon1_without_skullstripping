@@ -6,7 +6,6 @@ import nipype.pipeline.engine as pe
 import nipype.interfaces.io as nio
 from niflow.nipype1.workflows.smri.freesurfer.autorecon1 import *
 from nipype.interfaces.utility import IdentityInterface
-#from niflow.nipype1.workflows.smri.freesurfer.autorecon1 import *
 from nipype.interfaces.freesurfer import Info
 from nipype.interfaces import utility as niu
 from nipype.interfaces.io import DataSink
@@ -392,7 +391,7 @@ def create_AutoRecon1_without_skullstripping(name="AutoRecon1",
 
 def create_AutoRecon1_workflow(name = 'AutoRecon1'):
 
-    overall_wf = pe.Workflow(name=name)
+    wf = pe.Workflow(name=name)
 
     inputspec = pe.Node(
         interface=IdentityInterface(fields=[
@@ -453,7 +452,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
         fsvernum=fsvernum)
 
 
-    overall_wf.connect([(inputspec, ar1_wf, 
+    wf.connect([(inputspec, ar1_wf, 
             [('T1_files', 'inputspec.T1_files'), ('T2_file', 'inputspec.T2_file'),
             ('FLAIR_file', 'inputspec.FLAIR_file'),
             ('num_threads', 'inputspec.num_threads'), ('cw256', 'inputspec.cw256')]
@@ -467,7 +466,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
 
 
     for field in ar1_outputs:  
-        overall_wf.connect([(ar1_wf,outputspec, [('outputspec.' + field, field)])])
+        wf.connect([(ar1_wf,outputspec, [('outputspec.' + field, field)])])
 
     
     # PreDataSink: Switch Transforms to datasinked transfrom
@@ -487,7 +486,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
                      getDSTransformPath),
         name="PreDataSink_GetTransformPath")
 
-    overall_wf.connect([(inputspec, dstransform,
+    wf.connect([(inputspec, dstransform,
                        [('subjects_dir', 'subjects_dir'), ('subject_id',
                                                            'subject_id')])])
                                                            
@@ -497,7 +496,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
     predatasink_orig = pe.Node(AddXFormToHeader(), name="PreDataSink_Orig")
     predatasink_orig.inputs.copy_name = True
     predatasink_orig.inputs.out_file = 'orig.mgz'
-    overall_wf.connect([(outputspec, predatasink_orig, [('orig', 'in_file')]),
+    wf.connect([(outputspec, predatasink_orig, [('orig', 'in_file')]),
                       (dstransform, predatasink_orig, [('transform',
                                                         'transform')])])
                                                       
@@ -505,7 +504,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
         AddXFormToHeader(), name="PreDataSink_Orig_Nu")
     predatasink_orig_nu.inputs.copy_name = True
     predatasink_orig_nu.inputs.out_file = 'orig_nu.mgz'
-    overall_wf.connect(
+    wf.connect(
         [(outputspec, predatasink_orig_nu, [('orig_nu', 'in_file')]),
          (dstransform, predatasink_orig_nu, [('transform', 'transform')])])
 
@@ -513,7 +512,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
     predatasink_nu.inputs.copy_name = True
     predatasink_nu.inputs.out_file = 'nu.mgz'
     
-    overall_wf.connect([(outputspec, predatasink_nu, [('nu', 'in_file')]),
+    wf.connect([(outputspec, predatasink_nu, [('nu', 'in_file')]),
                       (dstransform, predatasink_nu, [('transform',
                                                       'transform')])])
     
@@ -522,13 +521,13 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
     datasink = pe.Node(DataSink(), name="DataSink")
     datasink.inputs.parameterization = False
 
-    overall_wf.connect([(inputspec, datasink,
+    wf.connect([(inputspec, datasink,
                        [('subjects_dir', 'base_directory'), ('subject_id',
                                                              'container')])])
 
 
     # assign datasink inputs
-    overall_wf.connect([
+    wf.connect([
         (predatasink_orig, datasink, [('out_file', 'mri.@orig')]),
         (predatasink_orig_nu, datasink, [('out_file', 'mri.@orig_nu')]),
         (predatasink_nu, datasink, [('out_file', 'mri.@nu')]),
@@ -561,13 +560,13 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
     postds_outputspec = pe.Node(
         niu.IdentityInterface(['subject_id']), name="postdatasink_outputspec")
 
-    overall_wf.connect(
+    wf.connect(
         [(datasink, completion, [('out_file', 'datasinked_files')]),
          (inputspec, completion, [('subject_id', 'subject_id')]),
          (completion, postds_outputspec, [('subject_id', 'subject_id')])])
     
 
-    return overall_wf
+    return wf
 
 
 
