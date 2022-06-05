@@ -5,6 +5,7 @@ Probablistic Tractography (i.e., mrtrix single shell CSD and multishell CSD with
 - **controlling all of pipeline process with a python script with shebang line**  
 (reference template: https://github.com/MIC-DKFZ/TractSeg  
 what is shebang line: https://wikidocs.net/16051)  
+추가 참고: shebang line을 쓸 때에는 쉘 상에서 입력해주는 스크립트 파일 이름이 절대 경로여야 한다. 예를 들어 현재 경로가 ```~/Desktop/test/bin```이며, 여기서 실행하고자 하는 파일이 ```test```라는 스크립트라고 한다면, 입력해야하는 쉘 커맨드가 ```test```가 아니라 ```~/Desktop/test/bin/test```이다.
 - Thus, each step can be perform with different binary files while the whole process also can be perform with a single binary files
 - docker image: pull freesurfer docker image => pip install qsiprep => pip install this repo => pip install the VBG => aliasing this repo and the VBG => commit docker image. Upload this image to docker repo.  
 - Dockerfile: Pull uploaded docker image. Freesurfer license key should be setting in this script. 
