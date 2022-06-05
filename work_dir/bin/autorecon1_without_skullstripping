@@ -574,7 +574,7 @@ def create_AutoRecon1_workflow(name = 'AutoRecon1'):
 
 # ================
 os.chdir('/scratch/connectome/dhkdgmlghks')
-tutorial_dir = os.path.abspath('lesion_tract_pipeline/smri_fsreconall_tutorial')
+tutorial_dir = os.path.abspath('lesion_tract_pipeline/lesion_tract')
 
 if not os.path.isdir(tutorial_dir):
     os.mkdir(tutorial_dir)
