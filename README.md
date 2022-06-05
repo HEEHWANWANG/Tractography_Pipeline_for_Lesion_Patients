@@ -1,21 +1,30 @@
 # Tractography_Pipeline_for_Lesion_Patients
-Probablistic Tractography (i.e., mrtrix single shell CSD and multishell CSD with Anatomical Constraint) Pipeline for Patients with focal Brain Lesion (e.g., Ischemic Stroke )
+Probablistic Tractography (i.e., mrtrix single shell CSD and multishell CSD with Anatomical Constraint) Pipeline for Patients with focal Brain Lesion (e.g., Ischemic Stroke )  
 
+## Pipeline docker arcitecture
+- **controlling all of pipeline process with a python script with shebang line**  
+(reference template: https://github.com/MIC-DKFZ/TractSeg  
+what is shebang line: https://wikidocs.net/16051)
+- docker image: pull freesurfer docker image => pip install qsiprep => pip install this repo => pip install the VBG => aliasing this repo and the VBG => commit docker image. Upload this image to docker repo.  
+- Dockerfile: Pull uploaded docker image. Freesurfer license key should be setting in this script. 
 
-## Step 1. Lesion Mask Generation 
+## Step 1. Warping to Talairach space
+Warping all input images to Talairach space by using freesurfer ```recon-all autorecon1`` without skull stripping.   
+
+## Step 2. Lesion Mask Generation 
 Generating **_brain lesion mask_** in a fully-automated way.  
 By using pre-trained deep learning model (i.e., **_TransUNet_**), generating a **_brain lesion mask_** image from **_T1w image_**. 
 Dataset used for pretraining is ATLAS(Anatomical Tracings of Lesions After Stroke) (https://www.nature.com/articles/sdata201811#MOESM218)
 
-## Step 2. Prerpocessing T1w and DWI images with brain lesion mask 
+## Step 3. Prerpocessing T1w and DWI images with brain lesion mask 
 Running QSIprep preprocessing process. 
 
-## Step 3. Freesurfer ```recon-all``` with the Virtual Brain Grfting
+## Step 4. Freesurfer ```recon-all``` with the Virtual Brain Grfting
 Running **_the Virtual Brain Grafting_** with **_preprocessed T1w image_** and **_brain lesion mask_**.  
 That's because Freesufer ```recon-all``` could not run with T1w image with focal brain lesion.  
 The Virtual Brain Grafting is a software using brain lesion mask to fill lesion and running Freesurfer ```recon-all```.
 
-## Step 4. Estimating Anatomical Constraint Tractography with results from Freesurfer ```recon-all```
+## Step 5. Estimating Anatomical Constraint Tractography with results from Freesurfer ```recon-all```
 - Running **_5 tissue type (5tt image) Hypbrid Surface and Volume Segmentation_** via mrtrix3 (https://mrtrix.readthedocs.io/en/latest/reference/commands/5ttgen.html). Once obtaining **_5tt image_**, excluding lesion spots by using **_brain lesion mask_** (https://mrtrix.readthedocs.io/en/latest/reference/commands/5ttedit.html).
 - Getting _**response function**_ for _**Constrained Spherical Deconvolution**_ (https://mrtrix.readthedocs.io/en/dev/reference/commands/dwi2response.html).
 - Getting **_FOD (Fiber Orientation Distribution) images_** with **_response function_** and **_preprocessed dwi images_** (https://mrtrix.readthedocs.io/en/latest/reference/commands/dwi2fod.html).
