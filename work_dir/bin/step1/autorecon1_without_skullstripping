@@ -5,7 +5,6 @@ import glob
 import nipype.pipeline.engine as pe
 import nipype.interfaces.io as nio
 from niflow.nipype1.workflows.smri.freesurfer.autorecon1 import *
-from nipype.interfaces.utility import IdentityInterface
 #from niflow.nipype1.workflows.smri.freesurfer.autorecon1 import *
 from nipype.interfaces.freesurfer import Info
 from nipype.interfaces import utility as niu
