@@ -1,5 +1,6 @@
 from bin.autorecon1_without_skullstripping import *
 from bin.move_T1 import *
+from utils import *
 import os
 import glob
 import shutil
@@ -7,7 +8,7 @@ import shutil
 import nipype.pipeline.engine as pe
 import nipype.interfaces.io as nio
 
-def autorecon1_withour_skullstripping(data_dir='/scratch/connectome/dhkdgmlghks/lesion_tract_pipeline/BIDS/Data_Testing_300', save_dir='/Users/wangheehwan/Desktop/lesion_tract_pipeline/BIDS/Data_Testing_300/../lesion_tract', n_process=1):
+def autorecon1_without_skullstripping(data_dir='/scratch/connectome/dhkdgmlghks/lesion_tract_pipeline/BIDS/Data_Testing_300', save_dir='/Users/wangheehwan/Desktop/lesion_tract_pipeline/BIDS/Data_Testing_300/../lesion_tract', n_process=1):
     os.chdir(data_dir)
     # ================
     wf = pe.Workflow(name="autorecon1_without_skullstripping")
@@ -98,13 +99,15 @@ def mgz2nifti(save_dir='/scratch/connectome/dhkdgmlghks/lesion_tract_pipeline/BI
 if __name__ == '__main__':
     data_dir = '/Users/wangheehwan/Desktop/lesion_tract_pipeline/BIDS/Data_Testing_300'
     
-    
     os.chdir(data_dir)
     save_dir = os.path.abspath('../lesion_tract')
     if not os.path.isdir(save_dir):
         os.mkdir(save_dir)
 
-    #autorecon1_withour_skullstripping(data_dir = data_dir, save_dir = save_dir, n_process=1) 
-    shutil.rmtree(os.path.join(save_dir, 'workdir')) # reomve working directory used for former stage
+    # warping to Talairach space 
+    autorecon1_without_skullstripping(data_dir = data_dir, save_dir = save_dir, n_process=1) 
+    remove_working_dir(save_dir) # reomve working directory used for former stage
+    
+    # Change image type from mgz to nifti
     mgz2nifti(save_dir = save_dir, n_process=1)
-    shutil.rmtree(os.path.join(save_dir, 'workdir'))
+    remove_working_dir(save_dir)
