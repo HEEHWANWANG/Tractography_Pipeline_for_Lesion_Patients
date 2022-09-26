@@ -5,18 +5,18 @@ import argparse
 import pandas as pd 
 
 # ---------------------------------------------------- Uutil functions ----------------------------------------------------- #
-def get_subject_result(work_dir, subject_name, metric='count'): 
-    
-    
+def get_subject_result(work_dir, subject_name, metric='count'):     
     if metric == 'count': 
         subject_file = subject_name + '_summary.txt'
-        subject_file = os.path.join(*[work_dir,subject_name, 'tract_bundle',subject_file])
-        subject_file = pd.read_table(subject_file, sep=" ", header=None)
+        subject_file_dir = os.path.join(*[work_dir,subject_name, 'tract_bundle',subject_file])
+        subject_file = pd.read_table(subject_file_dir, sep=" ", header=None)
+        check_files(subject_file, subject_file_dir)
         subject_data = pd.DataFrame([subject_file[1].values], columns=subject_file[0].values)
     else:
         subject_file = subject_name + '_summary.csv'
-        subject_file = os.path.join(*[work_dir,subject_name, 'tract_bundle', metric, subject_file])
-        subject_file = pd.read_csv(subject_file)
+        subject_file_dir = os.path.join(*[work_dir,subject_name, 'tract_bundle', metric, subject_file])
+        subject_file = pd.read_csv(subject_file_dir)
+        check_files(subject_file, subject_file_dir)
         subject_data = pd.DataFrame([subject_file[metric+'_mean'].values], columns=subject_file['tract_bundle'].values)
         
     return subject_data 
@@ -26,6 +26,11 @@ def save_result(dataframe: pd.DataFrame, metric, args):
     file_name = os.path.join(args.work_dir, file_name) 
     dataframe.to_csv(file_name, na_rep='NaN')
     print('SUMMARIZING RESULTS of %s FOR EACH SUBJECT IS DONE.\n' % metric)
+
+def check_files(dataframe: pd.DataFrame, dataframe_dir): 
+    nrow, ncol = dataframe.shape
+    if nrow != 35 and ncol != 2: 
+        raise ValueError(f'You should check {dataframe_dir}. The number of row should be 35 and the number of column should be 2')
     
 # ------------------------------------------------------------------------------------------------------------------------- #
 
